@@ -14,19 +14,7 @@ export default async function handler(req, res) {
     try {
       const postback = await prisma.postback.create({
         data: {
-          offer_id,
-          offer_name,
-          affiliate_id,
-          source,
           session_ip,
-          payout: parseFloat(payout),
-          datetime: new Date(datetime),
-          session_timestamp: parseInt(session_timestamp, 10),
-          aff_sub,
-          aff_sub2,
-          aff_sub3,
-          aff_sub4,
-          aff_sub5,
         },
       });
       res.status(200).json(postback);
