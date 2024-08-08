@@ -5,14 +5,9 @@ generator client {
 datasource db {
   provider          = "postgresql"
   url               = env("DATABASE_URL")
-  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
 }
 
 model Postback {
-  xata_updatedat DateTime @default(now()) @db.Timestamptz(6)
-  xata_id        String   @unique(map: "Postback__pgroll_new_xata_id_key") @default(dbgenerated("('rec_'::text || (xata_private.xid())::text)"))
-  xata_version   Int      @default(0)
-  xata_createdat DateTime @default(now()) @db.Timestamptz(6)
   id             Int      @id @default(autoincrement())
   offer_id       String?
   offer_name     String?
@@ -30,10 +25,7 @@ model Postback {
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 model Account {
-  xata_id           String   @unique(map: "Account__pgroll_new_xata_id_key") @default(dbgenerated("('rec_'::text || (xata_private.xid())::text)"))
-  xata_version      Int      @default(0)
-  xata_createdat    DateTime @default(now()) @db.Timestamptz(6)
-  xata_updatedat    DateTime @default(now()) @db.Timestamptz(6)
+  
   id                String   @id
   userId            String
   type              String
@@ -54,10 +46,7 @@ model Account {
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 model Session {
-  xata_version   Int      @default(0)
-  xata_createdat DateTime @default(now()) @db.Timestamptz(6)
-  xata_updatedat DateTime @default(now()) @db.Timestamptz(6)
-  xata_id        String   @unique(map: "Session__pgroll_new_xata_id_key") @default(dbgenerated("('rec_'::text || (xata_private.xid())::text)"))
+  
   id             String   @id
   sessionToken   String   @unique
   userId         String
@@ -66,10 +55,7 @@ model Session {
 }
 
 model User {
-  xata_id        String    @unique(map: "_pgroll_new_user_xata_id_key") @default(dbgenerated("('rec_'::text || (xata_private.xid())::text)"))
-  xata_version   Int       @default(0)
-  xata_createdat DateTime  @default(now()) @db.Timestamptz(6)
-  xata_updatedat DateTime  @default(now()) @db.Timestamptz(6)
+  
   username       String    @unique
   id             String    @id
   Account        Account[]
@@ -78,10 +64,7 @@ model User {
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 model VerificationToken {
-  xata_createdat DateTime @default(now()) @db.Timestamptz(6)
-  xata_updatedat DateTime @default(now()) @db.Timestamptz(6)
-  xata_id        String   @unique(map: "VerificationToken__pgroll_new_xata_id_key") @default(dbgenerated("('rec_'::text || (xata_private.xid())::text)"))
-  xata_version   Int      @default(0)
+  
   identifier     String
   token          String   @unique
   expires        DateTime
