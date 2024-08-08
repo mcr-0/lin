@@ -8,7 +8,7 @@ export async function GET() {
 
     const data = await prisma.postback.findMany({
       where: {
-        og_datetime: {
+        createdat: {
           gte: startOfDay,
         },
       },
@@ -16,10 +16,10 @@ export async function GET() {
         offer_name: true,
         offer_id: true,
         payout: true,
-        og_datetime: true,
+        createdat: true,
       },
       orderBy: {
-        og_datetime: "desc",
+        createdat: "desc",
       },
     });
 
