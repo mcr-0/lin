@@ -34,27 +34,20 @@ const HourlyPayoutBarChart: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetchHourlyStats()
-      .then((stats) => {
+    const fetchData = async () => {
+      try {
+        const stats = await fetchHourlyStats();
         setHourlyStats(stats);
         setError(null);
-      })
-      .catch((error) => {
+      } catch (error) {
         setError("Failed to fetch data");
         console.error("Fetch error:", error);
-      });
+      }
+    };
 
-    const interval = setInterval(() => {
-      fetchHourlyStats()
-        .then((stats) => {
-          setHourlyStats(stats);
-          setError(null);
-        })
-        .catch((error) => {
-          setError("Failed to fetch data");
-          console.error("Fetch error:", error);
-        });
-    }, 120000); // 30000 ms = 30 seconds
+    fetchData();
+
+    const interval = setInterval(fetchData, 30000); // 30000 ms = 30 seconds
 
     return () => clearInterval(interval);
   }, []);
