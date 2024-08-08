@@ -10,7 +10,7 @@ type Postback = {
   offer_name: string;
   offer_id: number;
   payout: number;
-  xata_createdat: string;
+  createdat: string;
 };
 
 const fetchHourlyStats = async (): Promise<number[]> => {
@@ -20,8 +20,8 @@ const fetchHourlyStats = async (): Promise<number[]> => {
   }
   const data: Postback[] = await response.json();
   const stats = Array(24).fill(0);
-  data.forEach(({ payout, xata_createdat }) => {
-    const date = new Date(xata_createdat);
+  data.forEach(({ payout, createdat }) => {
+    const date = new Date(createdat);
     const hour = date.getUTCHours(); // Uzyskujemy godzinę z daty
     stats[hour] += payout; // Sumujemy payout dla danej godziny
   });
