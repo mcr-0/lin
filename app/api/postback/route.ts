@@ -33,7 +33,7 @@ export async function GET(req: NextRequest) {
         source: source as string | undefined,
         session_ip: session_ip as string | undefined,
         payout: payout ? parseFloat(payout as string) : undefined,
-        datetime: datetime ? new Date(datetime as string) : undefined,
+        datetime: datetime as string | undefined,
         aff_sub: aff_sub as string | undefined,
         aff_sub2: aff_sub2 as string | undefined,
         aff_sub3: aff_sub3 as string | undefined,
