@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { TrendingUp } from "lucide-react";
+import moment from "moment-timezone";
 
 // Definiowanie typu dla postback
 type Postback = {
@@ -21,8 +22,8 @@ const fetchHourlyStats = async (): Promise<number[]> => {
   const data: Postback[] = await response.json();
   const stats = Array(24).fill(0);
   data.forEach(({ payout, createdat }) => {
-    const date = new Date(createdat);
-    const hour = date.getUTCHours(); // Uzyskujemy godzinę z daty
+    const date = moment.tz(createdat, "Europe/Warsaw");
+    const hour = date.hour(); // Uzyskujemy godzinę w strefie czasowej Warszawy
     stats[hour] += payout; // Sumujemy payout dla danej godziny
   });
   return stats;
@@ -53,7 +54,7 @@ const HourlyPayoutBarChart: React.FC = () => {
           setError("Failed to fetch data");
           console.error("Fetch error:", error);
         });
-    }, 30000); // 30000 ms = 30 seconds
+    }, 120000); // 30000 ms = 30 seconds
 
     return () => clearInterval(interval);
   }, []);
@@ -74,7 +75,8 @@ const HourlyPayoutBarChart: React.FC = () => {
           <BarChart data={chartData}>
             <CartesianGrid vertical={false} />
             <XAxis dataKey="hour" />
-
+            <YAxis />
+            <Tooltip />
             <Bar dataKey="payout" fill="var(--chart-1)" radius={[2, 2, 0, 0]} />
           </BarChart>
         </ResponsiveContainer>
