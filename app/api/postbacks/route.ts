@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import prisma from "../prisma/client";
+import prisma from "../../../prisma/client";
 
 export async function GET() {
   try {
@@ -8,7 +8,7 @@ export async function GET() {
 
     const data = await prisma.postback.findMany({
       where: {
-        datetime: {
+        og_datetime: {
           gte: startOfDay,
         },
       },
@@ -16,10 +16,10 @@ export async function GET() {
         offer_name: true,
         offer_id: true,
         payout: true,
-        datetime: true,
+        og_datetime: true,
       },
       orderBy: {
-        datetime: "desc",
+        og_datetime: "desc",
       },
     });
 
