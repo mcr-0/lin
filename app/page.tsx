@@ -1,10 +1,13 @@
 "use client";
-// src/components/Conversions.tsx
+
+import * as React from "react";
+import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
 import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
-const supabase = createClient();
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 
-// src/components/Conversions.tsx
+const supabase = createClient();
 
 interface Conversion {
   id: number;
@@ -19,9 +22,24 @@ interface Conversion {
   aff_sub3?: string;
   aff_sub4?: string;
   aff_sub5?: string;
+  created_at: string; // Ensure this field exists
 }
 
-const Conversions = () => {
+const chartConfig = {
+  views: {
+    label: "Page Views",
+  },
+  desktop: {
+    label: "Desktop",
+    color: "hsl(var(--chart-1))",
+  },
+  mobile: {
+    label: "Mobile",
+    color: "hsl(var(--chart-2))",
+  },
+} satisfies ChartConfig;
+
+const ConversionsChart = () => {
   const [conversions, setConversions] = useState<Conversion[]>([]);
   const [error, setError] = useState<string | null>(null);
 
@@ -37,7 +55,6 @@ const Conversions = () => {
 
     fetchData();
 
-    // Subscribe to real-time changes
     const subscription = supabase
       .channel("public:conversions")
       .on("postgres_changes", { event: "INSERT", schema: "public", table: "conversions" }, (payload) => {
@@ -56,11 +73,60 @@ const Conversions = () => {
     };
   }, []);
 
+  const hourlyPayouts = React.useMemo(() => {
+    const payoutsByHour: { [key: string]: number } = {};
+
+    conversions.forEach((conversion) => {
+      const hour = new Date(conversion.created_at).getHours();
+      const hourKey = `${hour}:00`;
+
+      if (!payoutsByHour[hourKey]) {
+        payoutsByHour[hourKey] = 0;
+      }
+      payoutsByHour[hourKey] += conversion.payout || 0;
+    });
+
+    return Object.keys(payoutsByHour).map((hour) => ({
+      hour,
+      payout: payoutsByHour[hour],
+    }));
+  }, [conversions]);
+
   if (error) {
     return <pre>{JSON.stringify(error, null, 2)}</pre>;
   }
 
-  return <pre>{JSON.stringify(conversions, null, 2)}</pre>;
+  return (
+    <Card>
+      <CardHeader className="flex flex-col items-stretch space-y-0 border-b p-0 sm:flex-row">
+        <div className="flex flex-1 flex-col justify-center gap-1 px-6 py-5 sm:py-6">
+          <CardTitle>Profit</CardTitle>
+          <CardDescription>Today</CardDescription>
+        </div>
+      </CardHeader>
+      <CardContent className="px-2 sm:p-6">
+        <ChartContainer
+          config={chartConfig} // Add this line to pass the config prop
+          className="aspect-auto h-[250px] w-full"
+        >
+          <BarChart
+            accessibilityLayer
+            data={hourlyPayouts}
+            margin={{
+              left: 12,
+              right: 12,
+            }}
+          >
+            <CartesianGrid vertical={false} />
+            <XAxis dataKey="hour" tickLine={false} axisLine={false} tickMargin={8} minTickGap={32} />
+            <YAxis />
+            <ChartTooltip content={<ChartTooltipContent className="w-[150px]" nameKey="payout" />} />
+            <Bar dataKey="payout" fill="hsl(var(--chart-1))" />
+          </BarChart>
+        </ChartContainer>
+      </CardContent>
+    </Card>
+  );
 };
 
-export default Conversions;
+export default ConversionsChart;

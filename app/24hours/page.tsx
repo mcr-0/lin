@@ -22,7 +22,7 @@ interface Conversion {
   aff_sub3?: string;
   aff_sub4?: string;
   aff_sub5?: string;
-  created_at: string; // Ensure this field exists
+  createdat: string; // Ensure this field exists
 }
 
 const chartConfig = {
@@ -77,8 +77,9 @@ const ConversionsChart = () => {
     const payoutsByHour: { [key: string]: number } = {};
 
     conversions.forEach((conversion) => {
-      const hour = new Date(conversion.created_at).getHours();
-      const hourKey = `${hour}:00`;
+      const date = new Date(conversion.createdat);
+      const hour = date.getHours();
+      const hourKey = `${hour.toString().padStart(2, "0")}:00`;
 
       if (!payoutsByHour[hourKey]) {
         payoutsByHour[hourKey] = 0;
@@ -86,10 +87,20 @@ const ConversionsChart = () => {
       payoutsByHour[hourKey] += conversion.payout || 0;
     });
 
-    return Object.keys(payoutsByHour).map((hour) => ({
-      hour,
-      payout: payoutsByHour[hour],
-    }));
+    // Ensure all 24 hours are present
+    for (let i = 0; i < 24; i++) {
+      const hourKey = `${i.toString().padStart(2, "0")}:00`;
+      if (!payoutsByHour[hourKey]) {
+        payoutsByHour[hourKey] = 0;
+      }
+    }
+
+    return Object.keys(payoutsByHour)
+      .sort()
+      .map((hour) => ({
+        hour,
+        payout: payoutsByHour[hour],
+      }));
   }, [conversions]);
 
   if (error) {
