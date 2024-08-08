@@ -4,7 +4,7 @@ const prisma = new PrismaClient();
 
 export default async function handler(req: any, res: any) {
   if (req.method === "GET") {
-    const { id: offer_id, offer_name, affiliate_id, source, session_ip, payout, datetime, aff_sub, aff_sub2, aff_sub3, aff_sub4, aff_sub5 } = req.query;
+    const { offer_id, offer_name, affiliate_id, source, session_ip, payout, datetime, aff_sub, aff_sub2, aff_sub3, aff_sub4, aff_sub5 } = req.query;
 
     // Simple validation
     if (!offer_id) {
