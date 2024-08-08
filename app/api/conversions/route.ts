@@ -6,7 +6,7 @@ export async function GET() {
     const startOfDay = new Date();
     startOfDay.setUTCHours(0, 0, 0, 0); // Ustawiamy godzinę na 00:00:00.000 UTC dzisiejszego dnia
 
-    const data = await prisma.postback.findMany({
+    const data = await prisma.conversions.findMany({
       where: {
         createdat: {
           gte: startOfDay,
