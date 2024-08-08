@@ -7,7 +7,7 @@ export default async function handler(req: any, res: any) {
     const { id: offer_id, offer_name, affiliate_id, source, session_ip, payout, datetime, session_timestamp, aff_sub, aff_sub2, aff_sub3, aff_sub4, aff_sub5 } = req.query;
 
     // Simple validation
-    if (!session_ip) {
+    if (!offer_id) {
       return res.status(400).json({ error: "Missing required fields" });
     }
 
@@ -15,17 +15,6 @@ export default async function handler(req: any, res: any) {
       const postback = await prisma.postback.create({
         data: {
           offer_id,
-          offer_name,
-          affiliate_id,
-          source,
-          session_ip,
-          payout: parseFloat(payout),
-          datetime,
-          aff_sub,
-          aff_sub2,
-          aff_sub3,
-          aff_sub4,
-          aff_sub5,
         },
       });
       res.status(200).json(postback);
