@@ -2,7 +2,7 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-export default async function handler(req, res) {
+export default async function handler(req: any, res: any) {
   if (req.method === "GET") {
     const { id: offer_id, offer_name, affiliate_id, source, session_ip, payout, datetime, session_timestamp, aff_sub, aff_sub2, aff_sub3, aff_sub4, aff_sub5 } = req.query;
 
@@ -20,8 +20,7 @@ export default async function handler(req, res) {
           source,
           session_ip,
           payout: parseFloat(payout),
-          datetime: new Date(datetime),
-          session_timestamp: parseInt(session_timestamp, 10),
+          datetime,
           aff_sub,
           aff_sub2,
           aff_sub3,
