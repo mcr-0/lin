@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import prisma from "../../../prisma/client";
+import pusher from "../../../pusher/pusher";
 
 export async function GET() {
   try {
@@ -21,6 +22,11 @@ export async function GET() {
       orderBy: {
         createdat: "desc",
       },
+    });
+
+    await pusher.trigger("postback-channel", "data-updated", {
+      message: "Data has been updated",
+      data: data,
     });
 
     console.log("Fetched data:", data); // Logowanie danych

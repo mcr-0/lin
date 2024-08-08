@@ -4,7 +4,6 @@ import React, { useEffect, useState } from "react";
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { TrendingUp } from "lucide-react";
-import moment from "moment-timezone";
 
 // Definiowanie typu dla postback
 type Postback = {
@@ -14,16 +13,16 @@ type Postback = {
   createdat: string;
 };
 
-const fetchInitialStats = async (): Promise<number[]> => {
-  const response = await fetch("/api/postbacks");
+const fetchHourlyStats = async (): Promise<number[]> => {
+  const response = await fetch("/api/conversions");
   if (!response.ok) {
     throw new Error("Network response was not ok...");
   }
   const data: Postback[] = await response.json();
   const stats = Array(24).fill(0);
   data.forEach(({ payout, createdat }) => {
-    const date = moment.tz(createdat, "Europe/Warsaw");
-    const hour = date.hour(); // Uzyskujemy godzinę w strefie czasowej Warszawy
+    const date = new Date(createdat);
+    const hour = date.getUTCHours(); // Uzyskujemy godzinę z daty
     stats[hour] += payout; // Sumujemy payout dla danej godziny
   });
   return stats;
@@ -34,37 +33,29 @@ const HourlyPayoutBarChart: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const stats = await fetchInitialStats();
+    fetchHourlyStats()
+      .then((stats) => {
         setHourlyStats(stats);
         setError(null);
-      } catch (error) {
+      })
+      .catch((error) => {
         setError("Failed to fetch data");
         console.error("Fetch error:", error);
-      }
-    };
-
-    fetchData();
-
-    const ws = new WebSocket("ws://localhost:3000");
-
-    ws.onmessage = (event) => {
-      const newData: Postback = JSON.parse(event.data);
-      const date = moment.tz(newData.createdat, "Europe/Warsaw");
-      const hour = date.hour();
-      setHourlyStats((prevStats) => {
-        const updatedStats = [...prevStats];
-        updatedStats[hour] += newData.payout;
-        return updatedStats;
       });
-    };
 
-    ws.onerror = (error) => {
-      console.error("WebSocket error:", error);
-    };
+    const interval = setInterval(() => {
+      fetchHourlyStats()
+        .then((stats) => {
+          setHourlyStats(stats);
+          setError(null);
+        })
+        .catch((error) => {
+          setError("Failed to fetch data");
+          console.error("Fetch error:", error);
+        });
+    }, 30000); // 30000 ms = 30 seconds
 
-    return () => ws.close();
+    return () => clearInterval(interval);
   }, []);
 
   const chartData = hourlyStats.map((payout, hour) => ({
@@ -80,12 +71,18 @@ const HourlyPayoutBarChart: React.FC = () => {
       </CardHeader>
       <CardContent>
         <ResponsiveContainer width="100%" height={300}>
-          <BarChart data={chartData}>
+          <BarChart
+            data={chartData}
+            margin={{
+              left: 12,
+              right: 12,
+            }}
+          >
             <CartesianGrid vertical={false} />
             <XAxis dataKey="hour" />
             <YAxis />
             <Tooltip />
-            <Bar dataKey="payout" fill="var(--chart-1)" radius={[2, 2, 0, 0]} />
+            <Bar dataKey="payout" fill="var(--chart-1)" radius={[10, 10, 0, 0]} />
           </BarChart>
         </ResponsiveContainer>
       </CardContent>
