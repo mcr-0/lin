@@ -28,7 +28,7 @@ const fetchHourlyStats = async (): Promise<number[]> => {
   return stats;
 };
 
-const HourlyPayoutBarChart: React.FC = () => {
+const HourlyPayoutBarChart2: React.FC = () => {
   const [hourlyStats, setHourlyStats] = useState<number[]>(Array(24).fill(0));
   const [error, setError] = useState<string | null>(null);
 
@@ -96,4 +96,4 @@ const HourlyPayoutBarChart: React.FC = () => {
   );
 };
 
-export default HourlyPayoutBarChart;
+export default HourlyPayoutBarChart2;
