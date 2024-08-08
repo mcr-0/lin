@@ -16,7 +16,7 @@ type Postback = {
 const fetchHourlyStats = async (): Promise<number[]> => {
   const response = await fetch("/api/postbacks");
   if (!response.ok) {
-    throw new Error("Network response was not ok");
+    throw new Error("Network response was not ok...");
   }
   const data: Postback[] = await response.json();
   const stats = Array(24).fill(0);
