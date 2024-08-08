@@ -14,7 +14,7 @@ type Postback = {
   createdat: string;
 };
 
-const fetchHourlyStats = async (): Promise<number[]> => {
+const fetchInitialStats = async (): Promise<number[]> => {
   const response = await fetch("/api/postbacks");
   if (!response.ok) {
     throw new Error("Network response was not ok...");
@@ -36,7 +36,7 @@ const HourlyPayoutBarChart: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const stats = await fetchHourlyStats();
+        const stats = await fetchInitialStats();
         setHourlyStats(stats);
         setError(null);
       } catch (error) {
@@ -47,9 +47,24 @@ const HourlyPayoutBarChart: React.FC = () => {
 
     fetchData();
 
-    const interval = setInterval(fetchData, 30000); // 30000 ms = 30 seconds
+    const ws = new WebSocket("ws://localhost:3000");
 
-    return () => clearInterval(interval);
+    ws.onmessage = (event) => {
+      const newData: Postback = JSON.parse(event.data);
+      const date = moment.tz(newData.createdat, "Europe/Warsaw");
+      const hour = date.hour();
+      setHourlyStats((prevStats) => {
+        const updatedStats = [...prevStats];
+        updatedStats[hour] += newData.payout;
+        return updatedStats;
+      });
+    };
+
+    ws.onerror = (error) => {
+      console.error("WebSocket error:", error);
+    };
+
+    return () => ws.close();
   }, []);
 
   const chartData = hourlyStats.map((payout, hour) => ({
