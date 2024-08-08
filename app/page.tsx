@@ -80,8 +80,6 @@ const HourlyPayoutBarChart: React.FC = () => {
           >
             <CartesianGrid vertical={false} />
             <XAxis dataKey="hour" />
-            <YAxis />
-            <Tooltip />
             <Bar dataKey="payout" fill="var(--chart-1)" radius={[10, 10, 0, 0]} />
           </BarChart>
         </ResponsiveContainer>
