@@ -12,7 +12,7 @@ export async function GET(req: NextRequest) {
   const source = searchParams.get("source");
   const session_ip = searchParams.get("session_ip");
   const payout = searchParams.get("payout");
-  const og_datetime = searchParams.get("og_datetime");
+
   const aff_sub = searchParams.get("aff_sub");
   const aff_sub2 = searchParams.get("aff_sub2");
   const aff_sub3 = searchParams.get("aff_sub3");
@@ -33,7 +33,7 @@ export async function GET(req: NextRequest) {
         source: source as string | undefined,
         session_ip: session_ip as string | undefined,
         payout: payout ? parseFloat(payout as string) : undefined,
-        og_datetime: og_datetime as string | undefined,
+
         aff_sub: aff_sub as string | undefined,
         aff_sub2: aff_sub2 as string | undefined,
         aff_sub3: aff_sub3 as string | undefined,

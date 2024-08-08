@@ -20,7 +20,6 @@ export default async function handler(req: any, res: any) {
           source,
           session_ip,
           payout: parseFloat(payout),
-          og_datetime,
           aff_sub,
           aff_sub2,
           aff_sub3,

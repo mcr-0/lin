@@ -20,7 +20,6 @@ model Postback {
   source         String?
   session_ip     String?
   payout         Float?
-  og_datetime    String?
   createdat      DateTime @default(now()) @db.Timestamptz(0)
   aff_sub        String?
   aff_sub2       String?
