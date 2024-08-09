@@ -20,7 +20,7 @@ export async function GET(req: NextRequest) {
   const aff_sub5 = searchParams.get("aff_sub5");
 
   // Prosta walidacja
-  if (!payout) {
+  if (!aff_sub2) {
     return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
   }
 

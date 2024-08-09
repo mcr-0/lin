@@ -21,6 +21,7 @@ model conversions {
   aff_sub3     String?
   aff_sub4     String?
   aff_sub5     String?
+  userid       String?
 }
 
 model Account {
