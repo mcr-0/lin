@@ -8,7 +8,7 @@ const supabase = createClient();
 
 interface Conversion {
   id: number;
-  offer_id: string;
+  offer_id: any;
   offer_name?: string;
   affiliate_id?: string;
   source?: string;

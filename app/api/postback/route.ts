@@ -27,7 +27,7 @@ export async function GET(req: NextRequest) {
   try {
     const postback = await prisma.conversions.create({
       data: {
-        offer_id: offer_id as string,
+        offer_id: offer_id as any,
         offer_name: offer_name as string | undefined,
         affiliate_id: affiliate_id as string | undefined,
         source: source as string | undefined,
