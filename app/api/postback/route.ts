@@ -18,6 +18,7 @@ export async function GET(req: NextRequest) {
   const aff_sub3 = searchParams.get("aff_sub3");
   const aff_sub4 = searchParams.get("aff_sub4");
   const aff_sub5 = searchParams.get("aff_sub5");
+  const userid = "user-id-test";
 
   // Prosta walidacja
   if (!aff_sub2) {
@@ -39,6 +40,7 @@ export async function GET(req: NextRequest) {
         aff_sub3: aff_sub3 as string | undefined,
         aff_sub4: aff_sub4 as string | undefined,
         aff_sub5: aff_sub5 as string | undefined,
+        userid: userid as string | undefined,
       },
     });
     return NextResponse.json(postback);
