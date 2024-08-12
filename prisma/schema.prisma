@@ -8,71 +8,75 @@ datasource db {
 }
 
 model conversions {
-  id           Int      @id @default(autoincrement())
-  createdat    DateTime @default(now()) @db.Timestamptz(0)
-  offer_id     String?
-  offer_name   String?
-  affiliate_id String?
-  source       String?
-  session_ip   String?
-  payout       Float?
-  aff_sub      String?
-  aff_sub2     String?
-  aff_sub3     String?
-  aff_sub4     String?
-  aff_sub5     String?
-  userid       String?
-}
-
-model Account {
-  id                String  @id
-  userId            String
-  type              String
-  provider          String
-  providerAccountId String
-  refresh_token     String?
-  access_token      String?
-  expires_at        Int?
-  token_type        String?
-  scope             String?
-  id_token          String?
-  session_state     String?
-  User              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@unique([provider, providerAccountId])
-}
-
-model Activity {
-  id        String   @id
-  action    String?
-  timestamp DateTime @default(now())
-  userId    String
-  converted Int?
-  payout    Float?
-  offer_id  Int?
-  User      User     @relation(fields: [userId], references: [id])
-}
-
-model Session {
-  id           String   @id
-  sessionToken String   @unique
-  userId       String
-  expires      DateTime
-  User         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id             Int      @id @default(autoincrement())
+  createdat      DateTime @default(now()) @db.Timestamptz(0)
+  offer_id       String?
+  offer_name     String?
+  affiliate_id   String?
+  source         String?
+  session_ip     String?
+  payout         Float?
+  aff_sub        String?
+  aff_sub2       String?
+  aff_sub3       String?
+  aff_sub4       String?
+  aff_sub5       String?
+  userid  String?
 }
 
 model User {
-  username String     @unique
-  id       String     @id
-  Account  Account[]
-  Activity Activity[]
-  Session  Session[]
+  id        String     @id @default(cuid())
+  username  String     @unique
+
+  accounts  Account[]
+  sessions  Session[]
+  activities Activity[]
+
+}
+
+model Activity {
+  id         String   @id @default(cuid())
+  action     String?
+  offer_id   String?
+  payout     Float?   
+  converted Int?
+  timestamp  DateTime @default(now())
+  user       User     @relation(fields: [userId], references: [id])
+  userId     String
+}
+model Account {
+  id                 String  @id @default(cuid())
+  userId             String
+  type               String
+  provider           String
+  providerAccountId  String
+  refresh_token      String?
+  access_token       String?
+  expires_at         Int?
+  token_type         String?
+  scope              String?
+  id_token           String?
+  session_state      String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model VerificationToken {
   identifier String
-  token      String   @unique
+  token      String @unique
   expires    DateTime
 
   @@unique([identifier, token])
 }
+
+
